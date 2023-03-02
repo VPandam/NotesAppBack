@@ -29,7 +29,7 @@ app.use(cors());
 app.use(logger);
 
 app.get("/", (req, res) => {
-  res.send("HelloPutito");
+  res.send("Hello World");
 });
 
 app.get("/notes", (req, res) => {
