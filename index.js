@@ -4,7 +4,6 @@ const express = require("express");
 const logger = require("./loggerMiddleware");
 const cors = require("cors");
 const NoteModel = require("./models/Note");
-const { default: mongoose } = require("mongoose");
 
 const PORT = process.env.PORT;
 const app = express();
@@ -17,9 +16,14 @@ app.get("/", (req, res) => {
 });
 
 app.get("/notes", (req, res) => {
-  NoteModel.find().then((result) => {
-    res.json(result);
-  });
+  NoteModel.find()
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.json(err);
+    });
 });
 
 app.get("/notes/:id", (req, res) => {
