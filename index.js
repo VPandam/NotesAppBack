@@ -59,7 +59,7 @@ app.post("/notes", (req, res) => {
     })
     .catch((err) => {
       res.status(400).json(err);
-      console.log(err);
+      console.log(err.message);
     });
 });
 
@@ -83,11 +83,11 @@ app.put("/notes/:id", (req, res) => {
   NoteModel.findById(id)
     .then((foundNote) => {
       if (body.content) foundNote.content = body.content;
-      if (body.important !== undefined) foundNote.important = body.important;
-
+      if (body.important.typeof !== undefined)
+        foundNote.important = body.important;
       foundNote.save().then((result) => {
         console.log(result);
-        res.send(result);
+        res.json(result);
       });
     })
     .catch((err) => {
@@ -98,4 +98,8 @@ app.put("/notes/:id", (req, res) => {
 
 app.use(notFound);
 
-app.listen(PORT, () => console.log(`Application running on port ${PORT}`));
+const server = app.listen(PORT, () =>
+  console.log(`Application running on port ${PORT}`)
+);
+
+module.exports = { app, server };
