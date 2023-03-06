@@ -1,0 +1,6 @@
+POST https://notes-app-back.onrender.com/notes/
+Content-Type: application/json
+
+{
+    "content": "naa"
+}

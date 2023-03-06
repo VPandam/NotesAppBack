@@ -10,7 +10,6 @@ const db = mongoose.connection;
 
 mongoose.connect(dbURI).catch((err) => console.log(err));
 
-console.log(dbURI)
 //Event triggered on database connected and on error
 db.on("open", () => console.log("dataBase opened"));
 db.on("error", (err) => console.log(err));

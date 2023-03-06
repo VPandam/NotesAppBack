@@ -1,9 +1,10 @@
 require("dotenv").config();
 require("./connection");
 const express = require("express");
-const logger = require("./loggerMiddleware");
+const logger = require("./middlewares/loggerMiddleware");
 const cors = require("cors");
 const NoteModel = require("./models/Note");
+const notFound = require("./middlewares/notFound");
 
 const PORT = process.env.PORT;
 const app = express();
@@ -30,6 +31,7 @@ app.get("/notes/:id", (req, res) => {
   const { id } = req.params;
   NoteModel.findById(id)
     .then((result) => {
+      console.log(result);
       res.json(result);
     })
     .catch((err) => {
@@ -40,11 +42,6 @@ app.get("/notes/:id", (req, res) => {
 
 app.post("/notes", (req, res) => {
   const { content, important } = req.body;
-  // if (!req.body || !content) {
-  //   return res.status(400).json({
-  //     error: "note content is required",
-  //   });
-  // }
 
   const newNote = NoteModel({
     content: content,
@@ -56,6 +53,7 @@ app.post("/notes", (req, res) => {
     .save()
     .then((result) => {
       {
+        console.log(result);
         res.status(201).json(result);
       }
     })
@@ -69,10 +67,35 @@ app.delete("/notes/:id", (req, res) => {
   const { id } = req.params;
   NoteModel.deleteOne({ _id: id })
     .then((result) => {
-      res.status(200).end();
-      console.log(result);
+      if (result.deletedCount > 0) {
+        res.status(200).json(result);
+        console.log(result);
+      } else {
+        res.status(404).json(result);
+      }
     })
     .catch((err) => res.status(204));
 });
+app.put("/notes/:id", (req, res) => {
+  const { body } = req;
+  const { id } = req.params;
+
+  NoteModel.findById(id)
+    .then((foundNote) => {
+      if (body.content) foundNote.content = body.content;
+      if (body.important !== undefined) foundNote.important = body.important;
+
+      foundNote.save().then((result) => {
+        console.log(result);
+        res.send(result);
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err.message);
+    });
+});
+
+app.use(notFound);
 
 app.listen(PORT, () => console.log(`Application running on port ${PORT}`));
