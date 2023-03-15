@@ -17,7 +17,6 @@ usersRouter.post("/", async (req, res, next) => {
   await newUser
     .save()
     .then((result) => {
-      console.log(result);
       res.json(result).status(201);
     })
     .catch((err) => {
@@ -29,9 +28,23 @@ usersRouter.post("/", async (req, res, next) => {
 usersRouter.get("/", async (req, res, next) => {
   const users = await userModel
     .find({})
+    .populate("notesAdded", { content: 1, date: 1, important: 1 })
     .then((result) => res.status(200).json(result))
     .catch((err) => {
       res.status(404);
+      next(err);
+    });
+});
+
+usersRouter.get("/:id", (req, res, next) => {
+  const { id } = req.params;
+  userModel
+    .findById(id)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(404).send(err.message);
       next(err);
     });
 });
