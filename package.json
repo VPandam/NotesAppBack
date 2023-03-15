@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "start": "cross-env NODE_ENV=production node index.js",
-    "test": "cross-env NODE_ENV=test PORT=3002 jest --verbose --silent",
+    "test": "cross-env NODE_ENV=test PORT=3002 jest --verbose --detectOpenHandles --silent ",
     "test:watch": "npm run test -- --watch"
   },
   "keywords": [],
@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@types/jest": "^29.4.0",
+    "bcrypt": "^5.1.0",
     "cors": "2.8.5",
     "cross-env": "^7.0.3",
     "dotenv": "16.0.3",
