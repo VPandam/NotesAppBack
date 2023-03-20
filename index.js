@@ -6,7 +6,8 @@ const cors = require("cors");
 const notFound = require("./middlewares/notFound");
 const errorHAndler = require("./middlewares/errorHandler");
 const notesRouter = require("./Controllers/notes");
-const usersRouter = require("./Controllers/users");
+const loginRouter = require("./Controllers/login");
+const usersRouter = require("./Controllers/Users");
 
 const PORT = process.env.PORT;
 const app = express();
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(logger);
 app.use("/notes", notesRouter);
 app.use("/users", usersRouter);
+app.use("/login", loginRouter);
 
 app.get("/", (req, res) => {
   res.send("<h1>Notes api</h1>");

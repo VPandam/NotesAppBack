@@ -40,6 +40,7 @@ usersRouter.get("/:id", (req, res, next) => {
   const { id } = req.params;
   userModel
     .findById(id)
+    .populate("notesAdded", { content: 1, date: 1, important: 1 })
     .then((result) => {
       res.status(200).json(result);
     })

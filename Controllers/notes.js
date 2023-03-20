@@ -1,6 +1,7 @@
 const notesRouter = require("express").Router();
 const NoteModel = require("../models/Note");
 const userModel = require("../models/User");
+const checkToken = require("../middlewares/checkToken");
 
 notesRouter.get("/", (req, res, next) => {
   NoteModel.find()
@@ -30,9 +31,9 @@ notesRouter.get("/:id", (req, res, next) => {
     });
 });
 
-notesRouter.post("/", async (req, res, next) => {
-  const { content, important, user } = req.body;
-
+notesRouter.post("/", checkToken, async (req, res, next) => {
+  const { content, important } = req.body;
+  const user = req.userId;
   const newNote = NoteModel({
     content: content,
     date: new Date(),
@@ -41,9 +42,7 @@ notesRouter.post("/", async (req, res, next) => {
   });
   try {
     const noteAdded = await newNote.save();
-    console.log(noteAdded + "note added");
     const userDB = await userModel.findById(user);
-    console.log(userDB);
     userDB.notesAdded.push(noteAdded._id);
     await userDB.save();
     res.status(201).json(noteAdded);
@@ -53,7 +52,7 @@ notesRouter.post("/", async (req, res, next) => {
   }
 });
 
-notesRouter.delete("/:id", (req, res, next) => {
+notesRouter.delete("/:id", checkToken, (req, res, next) => {
   const { id } = req.params;
   NoteModel.findByIdAndDelete(id)
     .then((result) => {
@@ -70,7 +69,7 @@ notesRouter.delete("/:id", (req, res, next) => {
       next(err);
     });
 });
-notesRouter.put("/:id", (req, res) => {
+notesRouter.put("/:id", checkToken, (req, res) => {
   const { body } = req;
   const { id } = req.params;
 
