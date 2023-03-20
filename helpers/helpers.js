@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const initialNotes = [
   {
@@ -30,4 +31,20 @@ const encryptPassword = async (password) => {
   return await bcrypt.hash(password, saltRounds);
 };
 
-module.exports = { initialNotes, initialUsers, encryptPassword };
+const generateTokenForUser = (user) => {
+  const { _id, userName, name } = user;
+  userForToken = {
+    id: _id,
+    userName,
+    name,
+  };
+  const token = jwt.sign(userForToken, process.env.JWT_SECRET);
+  return (userWithToken = { ...userForToken, token });
+};
+
+module.exports = {
+  initialNotes,
+  initialUsers,
+  encryptPassword,
+  generateTokenForUser,
+};

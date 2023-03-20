@@ -2,6 +2,7 @@ const notesRouter = require("express").Router();
 const NoteModel = require("../models/Note");
 const userModel = require("../models/User");
 const checkToken = require("../middlewares/checkToken");
+const mongoose = require("mongoose");
 
 notesRouter.get("/", (req, res, next) => {
   NoteModel.find()
@@ -14,21 +15,24 @@ notesRouter.get("/", (req, res, next) => {
     });
 });
 
-notesRouter.get("/:id", (req, res, next) => {
+notesRouter.get("/:id", async (req, res, next) => {
   const { id } = req.params;
-  NoteModel.findById(id)
-    .populate("user", { name: 1, userName: 1 })
-    .then((result) => {
-      if (result === null) {
-        res.status(404);
-      }
-      console.log(result);
-      res.json(result).status(200);
-    })
-    .catch((err) => {
-      res.status(404).send("Note not found");
-      next(err);
-    });
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    res
+      .status(400)
+      .json({ error: "id has not a valid format or is undefined" });
+  }
+  try {
+    const note = await NoteModel.findOne({ _id: id });
+    console.log(note);
+    if (note === null) {
+      res.status(404).json({ error: "note not found" });
+    } else {
+      res.json(note).status(200);
+    }
+  } catch (err) {
+    next(err);
+  }
 });
 
 notesRouter.post("/", checkToken, async (req, res, next) => {
@@ -54,6 +58,11 @@ notesRouter.post("/", checkToken, async (req, res, next) => {
 
 notesRouter.delete("/:id", checkToken, (req, res, next) => {
   const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    res
+      .status(400)
+      .json({ error: "id has not a valid format or is undefined" });
+  }
   NoteModel.findByIdAndDelete(id)
     .then((result) => {
       console.log(result);
@@ -65,7 +74,6 @@ notesRouter.delete("/:id", checkToken, (req, res, next) => {
       }
     })
     .catch((err) => {
-      res.status(404).send("Note not found");
       next(err);
     });
 });
