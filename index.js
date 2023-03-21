@@ -7,7 +7,7 @@ const notFound = require("./middlewares/notFound");
 const errorHAndler = require("./middlewares/errorHandler");
 const notesRouter = require("./Controllers/notes");
 const loginRouter = require("./Controllers/login");
-const usersRouter = require("./Controllers/Users");
+const usersRouter = require("./Controllers/users");
 
 const PORT = process.env.PORT;
 const app = express();
