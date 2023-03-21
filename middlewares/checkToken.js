@@ -7,8 +7,11 @@ const checkToken = (req, res, next) => {
   console.log(authorization);
 
   let decodedToken = "";
-  splittedAuthorization = authorization.split(" ");
-  const startsWithBearer = splittedAuthorization[0].toLowerCase() === "bearer";
+  const startsWithBearer = false;
+  if (authorization !== undefined) {
+    splittedAuthorization = authorization.split(" ");
+    startsWithBearer = splittedAuthorization[0].toLowerCase() === "bearer";
+  }
 
   if (!authorization || !startsWithBearer)
     return res.status(401).json({ error: "invalid or undefined token" });
