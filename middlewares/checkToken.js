@@ -7,7 +7,7 @@ const checkToken = (req, res, next) => {
   console.log(authorization);
 
   let decodedToken = "";
-  const startsWithBearer = false;
+  let startsWithBearer = false;
   if (authorization !== undefined) {
     splittedAuthorization = authorization.split(" ");
     startsWithBearer = splittedAuthorization[0].toLowerCase() === "bearer";

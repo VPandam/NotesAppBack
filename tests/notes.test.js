@@ -6,7 +6,6 @@ const userModel = require("../models/User");
 const api = supertest(app);
 const { initialNotes, generateTokenForUser } = require("../helpers/helpers");
 
-const userToken = "";
 beforeEach(async () => {
   //Delete every note in the db.
   await noteModel.deleteMany({});
